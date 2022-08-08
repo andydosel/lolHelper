@@ -64,10 +64,8 @@ class App(AuthToken):
             status = text.json()
 
             event.wait()
-            print(status)
-            if status == "ReadyCheck" and self.auto==1:
+            if status == "ReadyCheck":
                 app.autoAccept()
-                print(1)
             '''
             elif status == "Lobby":
                 App.autoStart()
@@ -140,10 +138,8 @@ if __name__ == '__main__':
     client_thread.start()
 
     event.set()
-    app.auto = 1
     os.popen("自动接受已开启")
 
-    '''
     while True:
         app.tips()
         try:
@@ -153,11 +149,8 @@ if __name__ == '__main__':
             continue
 
         if selection == 1:
-            if app.auto == 0:
-                app.auto = 1
-                os.popen("自动接受已开启")
+            event.set()
+            os.popen("自动接受已开启")
         elif selection == 2:
-            if app.auto == 1:
-                app.auto = 0
-                os.popen("自动接受已关闭")
-    '''
+            event.clear()
+            os.popen("自动接受已关闭")
