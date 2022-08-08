@@ -28,7 +28,7 @@ class AuthToken(object):
     def get_info(self):
         cmds = list[str]
         for process in psutil.process_iter():
-            if process.name().removeprefix(".exe") == "LeagueClientUx":
+            if process.name().removesuffix(".exe") == "LeagueClientUx":
                 cmds = process.cmdline()
                 break
         
@@ -64,10 +64,14 @@ class App(AuthToken):
             status = text.json()
 
             event.wait()
-            if status == "ReadyCheck":
-                App.autoAccept()
+            print(status)
+            if status == "ReadyCheck" and self.auto==1:
+                app.autoAccept()
+                print(1)
+            '''
             elif status == "Lobby":
                 App.autoStart()
+            '''
             sleep(1)
 
     def myInfo(self):
@@ -80,16 +84,16 @@ class App(AuthToken):
 
     def autoStart(self):
 
-        #自动开始匹配
+        #开始匹配
 
         api = "/lol-lobby/v2/lobby/matchmaking/search"
         requests.post(self.url+api, verify=False)
 
     def autoAccept(self):
 
-        #自动接受对局
+        #接受对局
 
-        api = "/lol-matchmaking/v1/ready-check/accept"
+        api = "/lol-lobby-team-builder/v1/ready-check/accept"
         requests.post(self.url+api, verify=False)
 
     def champSelect(self):
@@ -97,7 +101,7 @@ class App(AuthToken):
         #自动选择英雄
 
         api = "/lol-champ-select-legacy/v1/session"
-        session = requests.get(self.url+rest, verify=False).json()
+        session = requests.get(self.url+api, verify=False).json()
 
         actions = session['actions'][0]
         myTeam = session['myTeam']
@@ -136,9 +140,10 @@ if __name__ == '__main__':
     client_thread.start()
 
     event.set()
-    os.popen("自动接受已开启")
     app.auto = 1
+    os.popen("自动接受已开启")
 
+    '''
     while True:
         app.tips()
         try:
@@ -150,10 +155,9 @@ if __name__ == '__main__':
         if selection == 1:
             if app.auto == 0:
                 app.auto = 1
-                event.set()
                 os.popen("自动接受已开启")
         elif selection == 2:
             if app.auto == 1:
                 app.auto = 0
-                event.clear()
                 os.popen("自动接受已关闭")
+    '''
